@@ -533,3 +533,38 @@ role: assistant
 		})
 	}
 }
+
+func TestRoundtripToolCalls(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name string
+		in   ToolCall
+	}{
+		{
+			name: "tool use with multiple arguments",
+			in:   ToolCall{Type: "hammer", FunctionCall: &FunctionCall{Name: "hit", Arguments: `{ "force": 10, "direction": "down" }`}},
+		},
+	}
+
+	// Round-trip both JSON and YAML:
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			// JSON
+			jsonBytes, err := json.Marshal(tt.in)
+			if err != nil {
+				t.Errorf("MarshalJSON() error = %v", err)
+				return
+			}
+
+			var out ToolCall
+			if err := json.Unmarshal(jsonBytes, &out); err != nil {
+				t.Errorf("MarshalJSON() error = %v", err)
+				return
+			}
+			if diff := cmp.Diff(tt.in, out); diff != "" {
+				t.Errorf("JSON mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}

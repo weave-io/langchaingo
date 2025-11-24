@@ -244,12 +244,15 @@ func (tc *ToolCall) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("invalid type field in ToolCall")
 	}
 	var fc FunctionCall
-	fcData, ok := toolCall["function"].(json.RawMessage)
-	if ok {
+	if fcData, ok := toolCall["function"].(json.RawMessage); ok {
 		if err := json.Unmarshal(fcData, &fc); err != nil {
 			return fmt.Errorf("error unmarshalling function call: %w", err)
 		}
+	} else if fcMap, ok := toolCall["function"].(map[string]any); ok {
+		fc.Name = fcMap["name"].(string)
+		fc.Arguments = fcMap["arguments"].(string)
 	}
+
 	tc.ID = id
 	tc.Type = typ
 	tc.FunctionCall = &fc
