@@ -149,12 +149,14 @@ type ToolType string
 
 const (
 	ToolTypeFunction ToolType = "function"
+	ToolTypeMcp      ToolType = "mcp"
 )
 
 // Tool is a tool to use in a chat request.
 type Tool struct {
-	Type     ToolType           `json:"type"`
-	Function FunctionDefinition `json:"function,omitempty"`
+	Type      ToolType           `json:"type"`
+	Function  FunctionDefinition `json:"function,omitempty"`
+	MCPServer MCPServer          `json:"mcp_server,omitempty"`
 }
 
 // ToolChoice is a choice of a tool to use.
@@ -439,6 +441,15 @@ type FunctionDefinition struct {
 	Parameters any `json:"parameters"`
 	// Strict is a flag to enable structured output mode.
 	Strict bool `json:"strict,omitempty"`
+}
+
+// MCPServer is a server that can be used to invoke functions.
+type MCPServer struct {
+	ServerLabel     string            `json:"server_label"`
+	ServerURL       string            `json:"server_url"`
+	AllowedTools    []string          `json:"allowed_tools,omitempty"`
+	RequireApproval string            `json:"require_approval,omitempty"`
+	Headers         map[string]string `json:"headers"`
 }
 
 // FunctionCallBehavior is the behavior to use when calling functions.

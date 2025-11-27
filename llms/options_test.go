@@ -291,6 +291,16 @@ func TestWithTools(t *testing.T) {
 				Strict:      true,
 			},
 		},
+		{
+			Type: "mcp",
+			MCPServer: &llms.MCPServer{
+				ServerLabel:     "dummy",
+				ServerURL:       "https://example/mcp",
+				AllowedTools:    []string{"get_weather", "get_time"},
+				RequireApproval: "never",
+				Headers:         map[string]string{"Authorization": "Bearer 123"},
+			},
+		},
 	}
 
 	var opts llms.CallOptions
@@ -304,14 +314,21 @@ func TestWithTools(t *testing.T) {
 		if opts.Tools[i].Type != tool.Type {
 			t.Errorf("Tool[%d].Type = %v, want %v", i, opts.Tools[i].Type, tool.Type)
 		}
-		if opts.Tools[i].Function.Name != tool.Function.Name {
-			t.Errorf("Tool[%d].Function.Name = %v, want %v", i, opts.Tools[i].Function.Name, tool.Function.Name)
+		if opts.Tools[i].Function != nil {
+			if opts.Tools[i].Function.Name != tool.Function.Name {
+				t.Errorf("Tool[%d].Function.Name = %v, want %v", i, opts.Tools[i].Function.Name, tool.Function.Name)
+			}
+			if opts.Tools[i].Function.Description != tool.Function.Description {
+				t.Errorf("Tool[%d].Function.Description = %v, want %v", i, opts.Tools[i].Function.Description, tool.Function.Description)
+			}
+			if opts.Tools[i].Function.Strict != tool.Function.Strict {
+				t.Errorf("Tool[%d].Function.Strict = %v, want %v", i, opts.Tools[i].Function.Strict, tool.Function.Strict)
+			}
 		}
-		if opts.Tools[i].Function.Description != tool.Function.Description {
-			t.Errorf("Tool[%d].Function.Description = %v, want %v", i, opts.Tools[i].Function.Description, tool.Function.Description)
-		}
-		if opts.Tools[i].Function.Strict != tool.Function.Strict {
-			t.Errorf("Tool[%d].Function.Strict = %v, want %v", i, opts.Tools[i].Function.Strict, tool.Function.Strict)
+		if opts.Tools[i].MCPServer != nil {
+			if opts.Tools[i].MCPServer.ServerLabel != tool.MCPServer.ServerLabel {
+				t.Errorf("Tool[%d].MCPServer.ServerLabel = %v, want %v", i, opts.Tools[i].MCPServer.ServerLabel, tool.MCPServer.ServerLabel)
+			}
 		}
 	}
 }

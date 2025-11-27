@@ -77,6 +77,8 @@ type Tool struct {
 	Type string `json:"type"`
 	// Function is the function to call.
 	Function *FunctionDefinition `json:"function,omitempty"`
+	// MCPServer is the MCP server to use for this tool call.
+	MCPServer *MCPServer `json:"mcp_server,omitempty"`
 }
 
 // FunctionDefinition is a definition of a function that can be called by the model.
@@ -90,6 +92,15 @@ type FunctionDefinition struct {
 	// Strict is a flag to indicate if the function should be called strictly.
 	// Provider support varies - typically used for structured output guarantees.
 	Strict bool `json:"strict,omitempty"`
+}
+
+// MCPServer is a server that can be used to invoke functions.
+type MCPServer struct {
+	ServerLabel     string            `json:"server_label"`
+	ServerURL       string            `json:"server_url"`
+	AllowedTools    []string          `json:"allowed_tools,omitempty"`
+	RequireApproval string            `json:"require_approval,omitempty"`
+	Headers         map[string]string `json:"headers"`
 }
 
 // ToolChoice is a specific tool to use.

@@ -472,6 +472,17 @@ func toolFromTool(t llms.Tool) (openaiclient.Tool, error) {
 			Parameters:  t.Function.Parameters,
 			Strict:      t.Function.Strict,
 		}
+	case string(openaiclient.ToolTypeMcp):
+		if t.MCPServer == nil {
+			return openaiclient.Tool{}, fmt.Errorf("missing MCPServer for MCP tool")
+		}
+		tool.MCPServer = openaiclient.MCPServer{
+			ServerLabel:     t.MCPServer.ServerLabel,
+			ServerURL:       t.MCPServer.ServerURL,
+			AllowedTools:    t.MCPServer.AllowedTools,
+			RequireApproval: t.MCPServer.RequireApproval,
+			Headers:         t.MCPServer.Headers,
+		}
 	default:
 		return openaiclient.Tool{}, fmt.Errorf("tool type %v not supported", t.Type)
 	}
